@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot for Farming Techniques</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom right, #e0c3fc, #8ec5fc); /* Gradient background */
+            text-align: center;
+            padding-top: 50px;
+            height: 100vh; /* Full height for better gradient effect */
+            margin: 0; /* Remove default margin */
+        }
+        .chatbox {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff; /* White background for chatbox */
+            border: 1px solid #ddd;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px; /* Rounded corners */
+        }
+        #chat-log {
+            height: 300px;
+            overflow-y: scroll;
+            padding: 15px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .chat-input {
+            width: 75%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .send-btn {
+            padding: 10px 20px;
+            background-color: #4caf50; /* Green button */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .send-btn:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbox">
+        <h2>ChatBot for Farming Techniques</h2>
+        <div id="chat-log">
+            <!-- Chat log will appear here -->
+        </div>
+        <input id="user-input" class="chat-input" type="text" placeholder="Type your message here..." onkeypress="checkEnter(event)">
+        <button onclick="sendMessage()" class="send-btn">Send</button>
+    </div>
+
+    <script>
+        // Function to handle sending the message
+        function sendMessage() {
+            let userInput = document.getElementById("user-input");
+            let userMessage = userInput.value;
+            let chatLog = document.getElementById("chat-log");
+
+            // Prevent sending empty messages
+            if (userMessage.trim() === "") {
+                userInput.value = ""; // Clear input if empty
+                return;
+            }
+
+            // Append the user's message to the chat log
+            chatLog.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+
+            // Make an AJAX call to the Flask server
+            fetch(`/get?msg=${encodeURIComponent(userMessage)}`)
+                .then(response => response.text())
+                .then(botReply => {
+                    // Append the bot's response to the chat log
+                    chatLog.innerHTML += `<p><strong>Bot:</strong> ${botReply}</p>`;
+                    chatLog.scrollTop = chatLog.scrollHeight;  // Auto-scroll to the bottom
+                });
+
+            // Clear the input box
+            userInput.value = "";
+        }
+
+        // Function to handle "Enter" key press
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent default action (e.g., form submission)
+                sendMessage(); // Call sendMessage if Enter is pressed
+            }
+        }
+
+        // Alternative input event listener (from Code 1)
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+import sqlite3
+
+# Create a connection to the SQLite database
+conn = sqlite3.connect('farming_techniques.db')
+
+# Create a cursor
+c = conn.cursor()
+
+# Create a table for farming techniques
+c.execute('''
+    CREATE TABLE IF NOT EXISTS techniques (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        technique TEXT NOT NULL
+    )
+''')
+
+# Insert some sample data
+techniques = [
+    ('Crop Rotation: Grow different crops in succession to improve soil health.'),
+    ('Drip Irrigation: A method to deliver water directly to the roots.'),
+    ('Organic Fertilizers: Use compost or manure to enhance soil fertility.'),
+    ('Cover Cropping: Plant cover crops to prevent soil erosion.'),
+    ('Integrated Pest Management: Combine biological, cultural, and chemical tools.'),
+]
+
+c.executemany('INSERT INTO techniques (technique) VALUES (?)', techniques)
+
+# Commit and close the connection
+conn.commit()
+conn.close()
